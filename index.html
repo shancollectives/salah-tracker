@@ -15,13 +15,10 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; transition: 0.3s; padding-bottom: 50px; }
         .container { max-width: 500px; margin: 0 auto; background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        
-        /* Progress & Streak */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-card { background: rgba(0,0,0,0.05); padding: 10px; border-radius: 10px; text-align: center; }
         .progress-container { background: #eee; border-radius: 10px; height: 10px; margin: 10px 0; overflow: hidden; }
         #progress-bar { background: var(--on-time); height: 100%; width: 0%; transition: 0.5s; }
-
         .prayer-row { padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .btn-group { display: flex; gap: 5px; margin-top: 8px; }
         button { flex: 1; border: none; padding: 10px 2px; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; font-size: 0.75rem; opacity: 0.4; transition: 0.2s; }
@@ -29,14 +26,13 @@
         .btn-on { background: var(--on-time); }
         .btn-del { background: var(--delayed); }
         .btn-miss { background: var(--missed); }
-        
         .goal-section { margin-top: 20px; padding-top: 20px; border-top: 2px solid #eee; }
-        input[type="text"] { width: 80%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        input[type="text"] { width: 70%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
         .dark-toggle { background: var(--primary); font-size: 0.7rem; opacity: 1; width: auto; padding: 5px 10px; }
         .reminder { background: #d1ecf1; color: #0c5460; padding: 10px; border-radius: 10px; font-size: 0.8rem; margin-bottom: 15px; border-left: 5px solid #bee5eb; }
     </style>
 </head>
-<body class="">
+<body>
 
 <div class="container">
     <div class="header">
@@ -60,12 +56,12 @@
         <h4>Daily Goals</h4>
         <div id="goal-list"></div>
         <div style="display:flex; gap:5px; margin-top:10px;">
-            <input type="text" id="goal-input" placeholder="e.g. Read 2 pages Quran">
-            <button onclick="addGoal()" style="background:var(--primary); opacity:1;">Add</button>
+            <input type="text" id="goal-input" placeholder="e.g. Quran">
+            <button onclick="addGoal()" style="background:var(--primary); opacity:1; flex:none; padding:10px 15px;">Add</button>
         </div>
     </div>
 
-    <button onclick="resetToday()" style="background:#7f8c8d; margin-top:30px; width:100%; opacity:1;">Reset Data</button>
+    <button onclick="clearSelectedDay()" style="background:#7f8c8d; margin-top:30px; width:100%; opacity:1;">Clear Selected Day</button>
 </div>
 
 <script>
@@ -95,7 +91,6 @@
             tracker.appendChild(row);
         });
 
-        // Update Progress
         const percent = Math.round((completed / 5) * 100);
         document.getElementById('progress-bar').style.width = percent + '%';
         document.getElementById('percent-val').innerText = percent;
@@ -114,17 +109,21 @@
     function updateStreak() {
         let streak = 0;
         let d = new Date();
+        // Check days backwards starting from yesterday
         while(true) {
             let k = d.toISOString().split('T')[0];
             let dayData = JSON.parse(localStorage.getItem(k)) || {};
             let done = Object.values(dayData).filter(v => v === 'on' || v === 'del').length;
-            if(done >= 5) { streak++; d.setDate(d.getDate() - 1); } 
-            else break;
+            if(done >= 5) { 
+                streak++; 
+                d.setDate(d.getDate() - 1); 
+            } else {
+                break;
+            }
         }
         document.getElementById('streak-val').innerText = streak;
     }
 
-    // Goal Logic
     function addGoal() {
         const input = document.getElementById('goal-input');
         if(!input.value) return;
@@ -160,8 +159,11 @@
         renderGoals();
     }
 
-    function resetToday() {
-        if(confirm("Clear everything?")) { localStorage.clear(); location.reload(); }
+    function clearSelectedDay() {
+        if(confirm("Clear data for " + cal.value + "?")) {
+            localStorage.removeItem(cal.value);
+            render();
+        }
     }
 
     cal.addEventListener('change', render);
