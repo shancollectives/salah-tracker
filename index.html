@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Salah Tracker Pro</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #1c1e21;
+            --accent-color: #2d6a4f;
+            --progress-bg: #e4e6eb;
+            --streak-orange: #ff8c00;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #18191a;
+            --card-bg: #242526;
+            --text-color: #e4e6eb;
+            --accent-color: #52b788;
+            --progress-bg: #3a3b3c;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            transition: 0.3s;
+        }
+
+        .app-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 15px; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+
+        .streak-badge { background: var(--card-bg); padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: bold; color: var(--streak-orange); }
+
+        .icon-btn { background: var(--card-bg); border: none; padding: 10px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; color: var(--accent-color); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        .card { background: var(--card-bg); border-radius: 24px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+        .progress-box { margin-bottom: 20px; text-align: center; }
+        .bar-bg { background: var(--progress-bg); height: 10px; border-radius: 5px; overflow: hidden; margin-top: 10px; }
+        .bar-fill { background: var(--accent-color); height: 100%; width: 0%; transition: 0.5s; }
+
+        .salah-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--progress-bg); }
+
+        input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--accent-color); }
+
+        textarea { width: 100%; height: 80px; margin-top: 15px; border-radius: 12px; border: 1px solid var(--progress-bg); background: var(--bg-color); color: var(--text-color); padding: 12px; box-sizing: border-box; resize: none; }
+
+        .main-btn { width: 100%; padding: 12px; border: none; border-radius: 12px; background: var(--accent-color); color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 20px; width: 85%; max-width: 320px; text-align: center; }
+    </style>
+</head>
+<body data-theme="light">
+
+    <div class="app-container">
+        <div class="header">
+            <button class="icon-btn" onclick="toggleModal('cal-modal')">📅</button>
+            <div class="streak-badge" id="streak">🔥 0 Days</div>
+            <div>
+                <button class="icon-btn" onclick="toggleHelp()">❓</button>
+                <button class="icon-btn" id="t-icon" onclick="toggleTheme()">🌙</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 id="view-date" style="margin: 0 0 10px 0; text-align: center;">Today</h2>
+            <div class="progress-box">
+                <div class="bar-bg"><div class="bar-fill" id="fill"></div></div>
+                <small id="perc">0% Completed</small>
+            </div>
+
+            <div class="salah-row"><span>Fajr</span><input type="checkbox" id="fajr" onchange="update()"></div>
+            <div class="salah-row"><span>Dhuhr</span><input type="checkbox" id="dhuhr" onchange="update()"></div>
+            <div class="salah-row"><span>Asr</span><input type="checkbox" id="asr" onchange="update()"></div>
+            <div class="salah-row"><span>Maghrib</span><input type="checkbox" id="maghrib" onchange="update()"></div>
+            <div class="salah-row"><span>Isha</span><input type="checkbox" id="isha" onchange="update()"></div>
+
+            <textarea id="notes" placeholder="Daily Dua or Reflections..." oninput="save()"></textarea>
+            
+            <button class="main-btn" id="share-btn" style="background: #0077ff;">📤 Share App</button>
+            <button class="main-btn" onclick="exportData()" style="background: #666; font-size: 0.8rem;">📥 Backup Data</button>
+        </div>
+    </div>
+
+    <div id="cal-modal" class="modal" onclick="toggleModal('cal-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>Select Date</h3>
+            <input type="date" id="date-in" onchange="changeDate(this.value)" style="padding:10px; width:80%;">
+            <button class="main-btn" onclick="toggleModal('cal-modal')">Close</button>
+        </div>
+    </div>
+
+    <div id="help-modal" class="modal" onclick="toggleHelp()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>How it works</h3>
+            <p style="text-align:left; font-size:0.9rem;">
+                🔥 <b>Streaks:</b> Complete all 5 prayers to grow your streak.<br><br>
+                📅 <b>History:</b> Check past days using the calendar.<br><br>
+                🔒 <b>Privacy:</b> Your data stays only on your phone.
+            </p>
+            <button class="main-btn" onclick="toggleHelp()">Got it!</button>
+        </div>
+    </div>
+
+    <script>
+        let currentDay = new Date().toISOString().split('T')[0];
+        const prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+
+        function toggleTheme() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            const t = isDark ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', t);
+            localStorage.setItem('theme', t);
+            document.getElementById('t-icon').innerText = t === 'dark' ? '☀️' : '🌙';
+        }
+
+        function toggleModal(id) {
+            const m = document.getElementById(id);
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function toggleHelp() { toggleModal('help-modal'); }
+
+        function changeDate(d) {
+            currentDay = d;
+            document.getElementById('view-date').innerText = d;
+            load();
+            toggleModal('cal-modal');
+        }
+
+        function update() { save(); refreshUI(); }
+
+        function refreshUI() {
+            const data = JSON.parse(localStorage.getItem(currentDay)) || {};
+            const done = prayers.filter(p => document.getElementById(p).checked).length;
+            const p = (done / 5) * 100;
+            document.getElementById('fill').style.width = p + "%";
+            document.getElementById('perc').innerText = Math.round(p) + "% Completed";
+            calcStreak();
+        }
+
+        function calcStreak() {
+            let s = 0; let d = new Date();
+            while(true) {
+                const key = d.toISOString().split('T')[0];
+                const data = JSON.parse(localStorage.getItem(key)) || {};
+                if(prayers.every(p => data[p] === true)) { s++; d.setDate(d.getDate()-1); }
+                else break;
+            }
+            document.getElementById('streak').innerText = `🔥 ${s} Days`;
+        }
+
+        function save() {
+            const data = { notes: document.getElementById('notes').value };
+            prayers.forEach(p => data[p] = document.getElementById(p).checked);
+            localStorage.setItem(currentDay, JSON.stringify(data));
+        }
+
+        function load() {
+            const data = JSON.parse(localStorage.getItem(currentDay)) || {};
+            prayers.forEach(p => document.getElementById(p).checked = data[p] || false);
+            document.getElementById('notes').value = data.notes || "";
+            refreshUI();
+        }
+
+        document.getElementById('share-btn').addEventListener('click', async () => {
+            const shareData = { title: 'Salah Tracker Pro', text: 'Track your prayers and build your streak! 🔥', url: window.location.href };
+            try { if (navigator.share) { await navigator.share(shareData); } else { alert("Link: " + window.location.href); } } catch (err) {}
+        });
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(localStorage, null, 2)], {type: "text/plain"});
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "salah_backup.txt";
+            a.click();
+        }
+
+        window.onload = () => {
+            const t = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', t);
+            document.getElementById('t-icon').innerText = t === 'dark' ? '☀️' : '🌙';
+            document.getElementById('date-in').value = currentDay;
+            load();
+        }
+    </script>
+</body>
+</html>
