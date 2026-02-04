@@ -23,10 +23,38 @@
   ],
   "screenshots": [
     {
-      "src": "https://i.ibb.co/ZRjmkWdj/Cream-Orange-Elegant-Mosque-Islamic-Center-Logo.png",
+      "src": "screenshot1.jpg",
       "sizes": "1080x1920",
-      "type": "image/png",
-      "label": "Daily Tracker View"
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Mobile View"
+    },
+    {
+      "src": "screenshot2.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Mobile View"
+    },
+    {
+      "src": "screenshot3.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Mobile View"
+    },
+    {
+      "src": "screenshot4.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Mobile View"
+    },
+    {
+      "src": "screenshot1.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Mobile View"
     }
   ]
-}
