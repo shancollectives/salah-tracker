@@ -1,9 +1,10 @@
 const CACHE_NAME = 'salah-cache-v1';
 const ASSETS = [
-  'index.html',
   './',
+  'index.html',
   'manifest.json',
-  'sw.js'
+  'sw.js',
+  'icon512.png' // Add your icons here too!
 ];
 
 // Install: Save all files to the cache
