@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon512.png">
 
-    <script src=https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script> 
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -33,7 +33,7 @@
         .animate-pop { animation: pop 0.3s ease-out; }
     </style>
 </head>
-<body> class="bg-slate-50 dark:bg-black text-slate-900 dark:text-slate-100">
+<body class="bg-slate-50 dark:bg-black text-slate-900 dark:text-slate-100">
     <div id="root"></div>
 
     <script type="text/babel">
@@ -66,7 +66,6 @@
 
             const dateKey = currentDate.toLocaleDateString('en-CA');
 
-            // Corrected Dark Mode Logic
             useEffect(() => {
                 const root = window.document.documentElement;
                 if (darkMode) {
@@ -142,7 +141,6 @@
                             <h1 className="font-extrabold text-lg text-emerald-600">SalahTracker</h1>
                         </div>
                         <div className="flex items-center gap-2">
-                            {/* Streak Icon on Top */}
                             <div className="flex items-center gap-1 bg-orange-100 dark:bg-orange-900/30 px-3 py-1.5 rounded-full mr-1">
                                 <Icon name="flame" size={14} className="text-orange-500 fill-orange-500" />
                                 <span className="text-xs font-black text-orange-600 dark:text-orange-400">{streak}</span>
@@ -159,7 +157,6 @@
                     <main className="flex-1 p-6 space-y-6 overflow-y-auto pb-24 no-scrollbar">
                         {view === 'daily' ? (
                             <div className="animate-fade-in space-y-6">
-                                {/* Calendar Trigger Button (Blue) */}
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => setCurrentDate(new Date(currentDate.setDate(currentDate.getDate()-1)))} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl"><Icon name="chevron-left" /></button>
                                     <button onClick={() => setIsCalendarOpen(true)} className="flex-1 py-3 flex items-center justify-center gap-2 font-black text-white bg-blue-600 rounded-xl shadow-lg active:scale-[0.98]">
@@ -169,7 +166,6 @@
                                     <button onClick={() => setCurrentDate(new Date(currentDate.setDate(currentDate.getDate()+1)))} disabled={dateKey === new Date().toLocaleDateString('en-CA')} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl disabled:opacity-20"><Icon name="chevron-right" /></button>
                                 </div>
 
-                                {/* Prayers List */}
                                 <div className="space-y-4">
                                     {prayers.map(p => {
                                         const status = records[dateKey]?.[p.id];
@@ -186,7 +182,6 @@
                                     })}
                                 </div>
 
-                                {/* AI Coach Card */}
                                 <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-[2rem] p-6 text-white text-center shadow-lg">
                                     <p className="text-[10px] font-black uppercase opacity-60 mb-2 tracking-widest flex items-center justify-center gap-1"><Icon name="sparkles" size={12} /> AI Spiritual Coach</p>
                                     {reflection ? <p className="text-sm font-bold italic leading-relaxed animate-fade-in">"{reflection}"</p> : 
@@ -213,7 +208,6 @@
                         )}
                     </main>
 
-                    {/* CALENDAR BOTTOM SHEET */}
                     {isCalendarOpen && (
                         <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsCalendarOpen(false)}>
                             <div className="w-full max-w-md bg-white dark:bg-slate-950 rounded-t-[2.5rem] p-6 pb-12 animate-slide-up shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -241,6 +235,7 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+    </script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
@@ -254,5 +249,5 @@
         });
       }
     </script>
-  </body>
-</html> 
+</body>
+</html>
