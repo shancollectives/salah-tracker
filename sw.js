@@ -1,31 +1,25 @@
-const CACHE_NAME = 'salah-tracker-v1';
-const OFFLINE_URL = 'index.html';
+const CACHE_NAME = 'salah-v1';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json'
+];
 
-// Install: Cache the offline page
+// Install event
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // This tells the browser to cache your main page
-      return cache.addAll([OFFLINE_URL]);
+      // "force: true" makes it skip files it can't find
+      return cache.addAll(ASSETS).catch(err => console.log("Cache error skipped"));
     })
   );
-  self.skipWaiting();
 });
 
-// Activate: Clean up old caches
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
-});
-
-// Fetch: Serve the offline page when there is no internet
+// Fetch event (This is what PWABuilder checks for)
 self.addEventListener('fetch', (event) => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          return cache.match(OFFLINE_URL);
-        });
-      })
-    );
-  }
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
 });
