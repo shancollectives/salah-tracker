@@ -5,6 +5,7 @@
   "description": "A beautiful and minimalist prayer tracker to help you stay consistent with your Salah.",
   "lang": "en-US",
   "start_url": "index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#000000",
