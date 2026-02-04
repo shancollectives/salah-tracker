@@ -1,23 +1,17 @@
-const CACHE_NAME = "pwabuilder-offline";
-const QUEUE_NAME = "bgSyncQueue";
-const offlineFallbackPage = "index.html";
+const CACHE_NAME = 'offline-v1';
+const FILES_TO_CACHE = [
+  './',
+  'index.html'
+];
 
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.add(offlineFallbackPage);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
 });
 
-self.addEventListener("fetch", (event) => {
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          return cache.match(offlineFallbackPage);
-        });
-      })
-    );
-  }
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
 });
