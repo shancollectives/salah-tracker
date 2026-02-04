@@ -243,8 +243,12 @@
         root.render(<App />);
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js');
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js', { scope: './' })
+            .then(reg => console.log('Success!', reg))
+            .catch(err => console.log('Failure!', err));
+        });
       }
-    </script>
+    </script> 
   </body>
 </html> 
