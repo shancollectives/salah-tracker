@@ -242,16 +242,16 @@
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(function(reg) {
-          console.log('Successfully registered!', reg);
-        })
-        .catch(function(err) {
-          console.log('Registration failed!', err);
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('./sw.js', { scope: './' })
+            .then(function(reg) {
+              console.log('Successfully registered!', reg);
+            })
+            .catch(function(err) {
+              console.log('Registration failed!', err);
+            });
         });
-      });
       }
     </script>
   </body>
