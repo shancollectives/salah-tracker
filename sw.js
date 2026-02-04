@@ -4,7 +4,7 @@ const ASSETS = [
   'index.html',
   'manifest.json',
   'sw.js',
-  'icon512.png' // Add your icons here too!
+  'icon512.png'
 ];
 
 // Install: Save all files to the cache
